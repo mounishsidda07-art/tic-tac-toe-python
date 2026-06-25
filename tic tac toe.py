@@ -5,8 +5,12 @@ root.title("Tic Tac Toe")
 
 board = [""] * 9
 player = "X"
+x_score = 0
+o_score = 0
 
 def check_winner():
+    global x_score, o_score
+
     wins = [
         [0,1,2], [3,4,5], [6,7,8],
         [0,3,6], [1,4,7], [2,5,8],
@@ -15,17 +19,35 @@ def check_winner():
 
     for a, b, c in wins:
         if board[a] == board[b] == board[c] != "":
+
+            if board[a] == "X":
+                x_score += 1
+            else:
+                o_score += 1
+
+            score_label.config(
+                text=f"X: {x_score}    O: {o_score}"
+            )
+
             status.config(text=f"{board[a]} Wins!")
             disable_buttons()
             return
 
     if "" not in board:
         status.config(text="Draw!")
-
 def disable_buttons():
     for btn in buttons:
         btn.config(state=DISABLED)
+def reset_game():
+    global board, player
 
+    board = [""] * 9
+    player = "X"
+
+    for btn in buttons:
+        btn.config(text="", state=NORMAL)
+
+    status.config(text="Player X Turn")
 def click(pos):
     global player
 
@@ -56,5 +78,16 @@ for i in range(9):
 
 status = Label(root, text="Player X Turn", font=("Arial", 14))
 status.grid(row=3, column=0, columnspan=3)
+
+score_label = Label(root, text="X: 0    O: 0", font=("Arial", 14))
+score_label.grid(row=4, column=0, columnspan=3)
+
+reset_btn = Button(
+    root,
+    text="New Game",
+    font=("Arial", 12),
+    command=reset_game
+)
+reset_btn.grid(row=5, column=0, columnspan=3)
 
 root.mainloop()
